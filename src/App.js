@@ -4,6 +4,8 @@ import './App.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn,} from 'material-ui/Table';
 
+// address of the server backend
+const API = 'http://localhost:9090/backend';
 
 class App extends Component {
    constructor() {
@@ -15,7 +17,6 @@ class App extends Component {
 
    render() {
       const details = this.state.selected ? <CustomerDetail customer={this.state.selected}/> : null;
-
       return (
             <MuiThemeProvider>
                <div className="App">
@@ -34,7 +35,6 @@ class App extends Component {
       );
    }
 }
-
 export default App;
 
 class CustomerList extends React.Component {
@@ -46,7 +46,7 @@ class CustomerList extends React.Component {
    }
 
    componentDidMount() {
-      fetch('http://localhost:9090/backend/customers?projection=overview&size=10').then(results => {
+      fetch(API + '/customers?projection=overview&size=10').then(results => {
          return results.json();
       }).then(data => {
          console.log(data._embedded.customers);
@@ -82,19 +82,18 @@ function CustomerListEntry(props) {
             <TableRowColumn>{props.customer.customerId}</TableRowColumn>
             <TableRowColumn>{props.customer.numPurchases}</TableRowColumn>
             {/* <TableRowColumn><FlatButton label="Details"/></TableRowColumn> */}
-            <TableRowColumn><a href={'/kundendetails/' + props.customer.customerId}>Details</a></TableRowColumn>
+            <TableRowColumn><a href={'/details/' + props.customer.customerId}>Details</a></TableRowColumn>
          </TableRow>
    );
 }
 
 class CustomerDetail extends React.Component {
    componentDidMount() {
-      fetch('http://localhost:9090/backend/customers/search/findByCustomerId?customerId=' + this.props.customer.customerId).then(results => {
+      fetch(API + '/customers/search/findByCustomerId?customerId=' + this.props.customer.customerId).then(results => {
          return results.json();
       }).then(data => {
          console.log(data._embedded.customers);
          this.setState({customers: data._embedded.customers});
       });
    }
-
 }
